@@ -1,4 +1,4 @@
-name: Frontend CI/CD Deploy
+name: Frontend CI/CD (Vite + NGINX)
 
 on:
   push:
@@ -10,15 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Create build .env (optional)
-        # If you want to inject REACT_APP_* variables at build time,
-        # set them as GitHub secrets and uncomment this step.
-        if: ${{ secrets.REACT_APP_API_URL != '' }}
-        run: |
-          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > .env
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -47,4 +40,3 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
             "IMAGE=${{ secrets.DOCKER_USERNAME }}/frontend-app TAG=${{ github.sha }} /bin/bash /opt/deploy/frontend-deploy.sh \$IMAGE \$TAG"
-
