@@ -39,4 +39,8 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            "IMAGE=${{ secrets.DOCKER_USERNAME }}/frontend-app TAG=${{ github.sha }} /bin/bash /opt/deploy/frontend-deploy.sh \$IMAGE \$TAG"
+            "bash -s" << 'EOF'
+          IMAGE="${{ secrets.DOCKER_USERNAME }}/frontend-app"
+          TAG="${{ github.sha }}"
+          /bin/bash /opt/deploy/frontend-deploy.sh "$IMAGE" "$TAG"
+          EOF
